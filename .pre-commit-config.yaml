@@ -9,6 +9,7 @@ repos:
     rev: v0.910
     hooks:
       - id: mypy
+        exclude: tests/
   - repo:  https://github.com/PyCQA/flake8
     rev: 3.9.2
     hooks:
@@ -17,3 +18,4 @@ repos:
     rev: 5.9.1
     hooks:
       - id: isort
+        args: ["--profile", "black"]
