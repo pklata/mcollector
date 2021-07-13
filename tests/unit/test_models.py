@@ -14,7 +14,6 @@ from mcollector.domain.models import (
 class TestBuildings:
     def test_local_can_be_add_to_building(self, building, local):
         building.add(local)
-        assert local in building._locals
         assert building.locals == [local]
 
     def test_locals_in_building_are_sorted(self, building):

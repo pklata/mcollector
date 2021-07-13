@@ -1,7 +1,6 @@
 from datetime import date
 
 from mcollector.domain.models import (
-    Address,
     Building,
     BuildingESPIR,
     Circuit,
@@ -20,14 +19,13 @@ def test_make_measurements_of_espir(c_meas_data):
     """Make measurements of effectiveness of
     protection against electric shock and insulation resistance"""
     # Użytkownik wybiera budynek którego dotyczy pomiar
-    address = Address(
+    building = Building(
         country="Polska",
         address="Towarowa 365",
         zip_code="02-200",
         city="Warszawa",
         county="mazowieckie",
     )
-    building = Building(address=address)
     local7 = Local(number=7)
     building.add(local7)
     local5 = Local(number=5)

@@ -1,22 +1,31 @@
 import pytest
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
-from mcollector.domain.models import Address, Building, CircuitMeasurementData, Local
+from mcollector.domain.models import Building, CircuitMeasurementData, Local
+from mcollector.orm.mappings import mapper_registry, start_mappers
 
 
 @pytest.fixture
-def address():
-    return Address(
+async def session():
+    engine = create_async_engine("sqlite+aiosqlite://", future=True)
+    start_mappers()
+    async with engine.begin() as conn:
+        await conn.run_sync(mapper_registry.metadata.drop_all)
+        await conn.run_sync(mapper_registry.metadata.create_all)
+
+    async with AsyncSession(engine, future=True) as session:
+        yield session
+
+
+@pytest.fixture
+def building():
+    return Building(
         country="Polska",
         address="Towarowa 365",
         zip_code="02-200",
         city="Warszawa",
         county="mazowieckie",
     )
-
-
-@pytest.fixture
-def building(address):
-    return Building(address)
 
 
 @pytest.fixture

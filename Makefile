@@ -1,4 +1,4 @@
-.PHONY: format lint
+.PHONY: format lint test
 
 format:
 	${INFO} "Formatting code..."
@@ -10,6 +10,11 @@ lint:
 	${INFO} "Linting code..."
 	flake8 src tests
 	${INFO} "Code linted"
+
+test:
+	${INFO} "Testing..."
+	pytest -vv tests
+	${INFO} "Tests passed"
 
 # Cosmetics
 YELLOW := "\e[1;33m"

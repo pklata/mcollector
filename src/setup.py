@@ -6,6 +6,6 @@ setup(
     description="Measurements Collector",
     packages=find_packages(),
     include_package_data=True,
-    install_requires=[],
-    extras_require={"test": ["pytest==6.2.4"]},
+    install_requires=["SQLAlchemy==1.4.20"],
+    extras_require={"test": ["pytest==6.2.4", "pytest-asyncio==0.15.1"]},
 )

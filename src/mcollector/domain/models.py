@@ -1,16 +1,7 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date
 from functools import singledispatchmethod
 from typing import Any, List, Optional, Set
-
-
-@dataclass(frozen=True)
-class Address:
-    country: str
-    address: str
-    zip_code: str
-    city: str
-    county: str
 
 
 @dataclass(frozen=True)
@@ -60,22 +51,26 @@ class MeasurementMethod:
     name: str
 
 
+@dataclass
 class Building:
     """Building where inspection is taking place"""
 
-    def __init__(self, address: Address):
-        self.address = address
-        self._locals: Set[Local] = set()
+    id: Optional[int] = None
+    country: Optional[str] = None
+    address: Optional[str] = None
+    zip_code: Optional[str] = None
+    city: Optional[str] = None
+    county: Optional[str] = None
+    locals: List[Local] = field(default_factory=list)
 
-    @property
-    def locals(self) -> List[Local]:
-        return sorted(self._locals)
+    def get_locals(self) -> List[Local]:
+        return sorted(self.locals)
 
     def add(self, local: Local) -> None:
-        self._locals.add(local)
+        self.locals.append(local)
 
     def filter_locals(self, match: str) -> List[Local]:
-        _locals = [local for local in self._locals if match in str(local.number)]
+        _locals = [local for local in self.locals if match in str(local.number)]
         return sorted(_locals)
 
 
