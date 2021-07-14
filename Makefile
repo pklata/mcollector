@@ -13,8 +13,12 @@ lint:
 
 test:
 	${INFO} "Testing..."
-	pytest -vv tests
+	pytest -vv --cov=src tests/
 	${INFO} "Tests passed"
+
+run:
+	${INFO} "Running application..."
+	uvicorn mcollector.api.app:app --reload
 
 # Cosmetics
 YELLOW := "\e[1;33m"

@@ -1,3 +1,5 @@
 /venv/
 /.idea/
 /src/mcollector.egg-info/
+/.coverage
+/mcollector.egg-info/

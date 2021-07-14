@@ -1,19 +1,24 @@
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
+from mcollector.db.mappings import mapper_registry, start_mappers
 from mcollector.domain.models import Building, CircuitMeasurementData, Local
-from mcollector.orm.mappings import mapper_registry, start_mappers
+
+
+@pytest.fixture(scope="session")
+def async_engine():
+    engine = create_async_engine("sqlite+aiosqlite://", future=True)
+    start_mappers()
+    return engine
 
 
 @pytest.fixture
-async def session():
-    engine = create_async_engine("sqlite+aiosqlite://", future=True)
-    start_mappers()
-    async with engine.begin() as conn:
+async def session(async_engine):
+    async with async_engine.begin() as conn:
         await conn.run_sync(mapper_registry.metadata.drop_all)
         await conn.run_sync(mapper_registry.metadata.create_all)
 
-    async with AsyncSession(engine, future=True) as session:
+    async with AsyncSession(async_engine, future=True) as session:
         yield session
 
 
