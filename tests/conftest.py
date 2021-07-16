@@ -1,7 +1,7 @@
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
-from mcollector.db.mappings import mapper_registry, start_mappers
+from mcollector.db.mappings import SessionManager, mapper_registry, start_mappers
 from mcollector.domain.models import Building, CircuitMeasurementData, Local
 
 
@@ -13,17 +13,25 @@ def async_engine():
 
 
 @pytest.fixture
-async def session(async_engine):
+async def session(async_engine, monkeypatch):
     async with async_engine.begin() as conn:
         await conn.run_sync(mapper_registry.metadata.drop_all)
         await conn.run_sync(mapper_registry.metadata.create_all)
 
-    async with AsyncSession(async_engine, future=True) as session:
+    async with AsyncSession(
+        async_engine, future=True, expire_on_commit=False
+    ) as session:
+
+        def get_session(x):
+            return session
+
+        monkeypatch.setattr(SessionManager, "get_session", get_session)
+        # TODO try without monkeypatch
         yield session
 
 
 @pytest.fixture
-def building():
+def building(session):
     return Building(
         country="Polska",
         address="Towarowa 365",

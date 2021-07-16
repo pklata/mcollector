@@ -1,4 +1,5 @@
 from sqlalchemy import JSON, Column, Integer, String, Table
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import registry
 
 from mcollector.domain.models import Building
@@ -20,3 +21,11 @@ buildings = Table(
 
 def start_mappers() -> None:
     mapper_registry.map_imperatively(Building, buildings)
+
+
+async_engine = create_async_engine("sqlite+aiosqlite://", future=True)
+
+
+class SessionManager:
+    def get_session(self) -> AsyncSession:
+        return AsyncSession(async_engine, future=True, expire_on_commit=False)

@@ -1,6 +1,8 @@
 import pytest
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
+from mcollector.db.mappings import SessionManager
 from mcollector.domain import models
 
 
@@ -25,3 +27,8 @@ async def test_building_mapping(session):
     result = await session.execute(select(models.Building))
     result = list(result.scalars())
     assert result == expected
+
+
+def test_session_manager():
+    session = SessionManager().get_session()
+    assert isinstance(session, AsyncSession)
