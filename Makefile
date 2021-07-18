@@ -18,7 +18,7 @@ test:
 
 run:
 	${INFO} "Running application..."
-	uvicorn mcollector.api.app:app --reload
+	uvicorn mcollector.entrypoints.fastapi.app:app --reload
 
 # Cosmetics
 YELLOW := "\e[1;33m"
