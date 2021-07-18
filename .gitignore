@@ -3,3 +3,4 @@
 /src/mcollector.egg-info/
 /.coverage
 /mcollector.egg-info/
+/mcollector-tests/mcollector_tests.egg-info/

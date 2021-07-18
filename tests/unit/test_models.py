@@ -1,5 +1,7 @@
 from datetime import date
 
+from mcollector_tests.factories import BuildingFactory
+
 from mcollector.domain.models import (
     BuildingESPIR,
     Circuit,
@@ -12,18 +14,21 @@ from mcollector.domain.models import (
 
 
 class TestBuildings:
-    def test_local_can_be_add_to_building(self, building, local):
+    def test_local_can_be_add_to_building(self, local):
+        building = BuildingFactory()
         building.add(local)
         assert building.locals == [local]
 
-    def test_locals_in_building_are_sorted(self, building):
+    def test_locals_in_building_are_sorted(self):
+        building = BuildingFactory()
         local7 = Local(7)
         local8 = Local(8)
         building.add(local7)
         building.add(local8)
         assert building.locals == [local7, local8]
 
-    def test_filter_out_local_number_7(self, building):
+    def test_filter_out_local_number_7(self):
+        building = BuildingFactory()
         local7 = Local(7)
         local8 = Local(8)
         building.add(local7)
@@ -31,7 +36,8 @@ class TestBuildings:
         _locals = building.filter_locals("7")
         assert _locals == [local7]
 
-    def test_filter_out_local_number_7_17_71(self, building):
+    def test_filter_out_local_number_7_17_71(self):
+        building = BuildingFactory()
         local7 = Local(7)
         local17 = Local(17)
         local71 = Local(71)
@@ -45,13 +51,15 @@ class TestBuildings:
 
 
 class TestBuildingESPIR:
-    def test_adding_local_inspection(self, building, local):
+    def test_adding_local_inspection(self, local):
+        building = BuildingFactory()
         b_insp = BuildingESPIR(building)
         l_insp = LocalESPIR(local)
         b_insp.add(l_insp)
         assert b_insp.local_inspections == [l_insp]
 
-    def test_local_inspection_are_sorted(self, building, local):
+    def test_local_inspection_are_sorted(self, local):
+        building = BuildingFactory()
         b_insp = BuildingESPIR(building)
         local7 = Local(7)
         local8 = Local(8)

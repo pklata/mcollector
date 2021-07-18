@@ -3,9 +3,7 @@ import pytest
 
 @pytest.mark.asyncio
 async def test_get_buildings(session, async_app, building):
-    async with session.begin():
-        session.add(building)
-        await session.commit()
+    await building(id=1)
     async with async_app as app:
         response = await app.get("/building")
     assert response.status_code == 200

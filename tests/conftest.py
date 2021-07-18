@@ -1,23 +1,34 @@
+import asyncio
+from typing import Callable
+
 import pytest
+from mcollector_tests.factories import BuildingFactory, async_factory  # noqa
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
 from mcollector.db.mappings import SessionManager, mapper_registry, start_mappers
-from mcollector.domain.models import Building, CircuitMeasurementData, Local
+from mcollector.domain.models import CircuitMeasurementData, Local
 
 
 @pytest.fixture(scope="session")
-def async_engine():
+def event_loop(request):
+    """Create an instance of the default event loop for test session."""
+    loop = asyncio.get_event_loop_policy().new_event_loop()
+    yield loop
+    loop.close()
+
+
+@pytest.fixture(scope="session")
+async def async_engine():
     engine = create_async_engine("sqlite+aiosqlite://", future=True)
     start_mappers()
+    async with engine.begin() as conn:
+        await conn.run_sync(mapper_registry.metadata.drop_all)
+        await conn.run_sync(mapper_registry.metadata.create_all)
     return engine
 
 
 @pytest.fixture
 async def session(async_engine, monkeypatch):
-    async with async_engine.begin() as conn:
-        await conn.run_sync(mapper_registry.metadata.drop_all)
-        await conn.run_sync(mapper_registry.metadata.create_all)
-
     async with AsyncSession(
         async_engine, future=True, expire_on_commit=False
     ) as session:
@@ -27,18 +38,14 @@ async def session(async_engine, monkeypatch):
 
         monkeypatch.setattr(SessionManager, "get_session", get_session)
         # TODO try without monkeypatch
+        nested = await session.begin_nested()
         yield session
+        await nested.rollback()
 
 
 @pytest.fixture
-def building(session):
-    return Building(
-        country="Polska",
-        address="Towarowa 365",
-        zip_code="02-200",
-        city="Warszawa",
-        county="mazowieckie",
-    )
+async def building(session) -> Callable:
+    return await async_factory(BuildingFactory, session)
 
 
 @pytest.fixture
