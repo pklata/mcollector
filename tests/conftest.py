@@ -9,7 +9,7 @@ from mcollector.domain.models import CircuitMeasurementData, Local
 
 
 @pytest.fixture(scope="session")
-def event_loop(request):
+def event_loop():
     """Create an instance of the default event loop for test session."""
     loop = asyncio.get_event_loop_policy().new_event_loop()
     yield loop
@@ -24,7 +24,7 @@ async def async_engine():
 
 
 @pytest.fixture
-async def session(async_engine, monkeypatch):
+async def session(async_engine):
     async with DBManager.get_session() as session:
         nested = await session.begin_nested()
         yield session
