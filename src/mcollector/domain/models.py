@@ -38,7 +38,7 @@ class IRTechnicalConditions:
     np_gt_500: float
 
 
-@dataclass(frozen=True, order=True)
+@dataclass
 class Local:
     """Local where the part of inspection is taking place. Part of the building"""
 
@@ -64,14 +64,14 @@ class Building:
     locals: List[Local] = field(default_factory=list)
 
     def get_locals(self) -> List[Local]:
-        return sorted(self.locals)
+        return sorted(self.locals, key=lambda l: l.number)
 
     def add(self, local: Local) -> None:
         self.locals.append(local)
 
     def filter_locals(self, match: str) -> List[Local]:
         _locals = [local for local in self.locals if match in str(local.number)]
-        return sorted(_locals)
+        return sorted(_locals, key=lambda l: l.number)
 
 
 @dataclass(frozen=True)
@@ -184,4 +184,4 @@ class BuildingESPIR:
 
     @property
     def local_inspections(self) -> List[LocalESPIR]:
-        return sorted(self._local_inspections, key=lambda i: i.local)
+        return sorted(self._local_inspections, key=lambda i: i.local.number)

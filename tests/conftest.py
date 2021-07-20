@@ -3,9 +3,8 @@ from typing import Callable
 
 import pytest
 from mcollector_tests.factories import BuildingFactory, async_factory  # noqa
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
-from mcollector.db.mappings import SessionManager, mapper_registry, start_mappers
+from mcollector.db.mappings import DBManager
 from mcollector.domain.models import CircuitMeasurementData, Local
 
 
@@ -19,25 +18,14 @@ def event_loop(request):
 
 @pytest.fixture(scope="session")
 async def async_engine():
-    engine = create_async_engine("sqlite+aiosqlite://", future=True)
-    start_mappers()
-    async with engine.begin() as conn:
-        await conn.run_sync(mapper_registry.metadata.drop_all)
-        await conn.run_sync(mapper_registry.metadata.create_all)
-    return engine
+    DBManager.start_mappers()
+    await DBManager.recreate_db()
+    return DBManager.get_engine()
 
 
 @pytest.fixture
 async def session(async_engine, monkeypatch):
-    async with AsyncSession(
-        async_engine, future=True, expire_on_commit=False
-    ) as session:
-
-        def get_session(x):
-            return session
-
-        monkeypatch.setattr(SessionManager, "get_session", get_session)
-        # TODO try without monkeypatch
+    async with DBManager.get_session() as session:
         nested = await session.begin_nested()
         yield session
         await nested.rollback()

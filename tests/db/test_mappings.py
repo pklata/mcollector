@@ -2,7 +2,7 @@ import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-from mcollector.db.mappings import SessionManager
+from mcollector.db.mappings import DBManager
 from mcollector.domain import models
 
 
@@ -30,5 +30,5 @@ async def test_building_mapping(session):
 
 
 def test_session_manager():
-    session = SessionManager().get_session()
+    session = DBManager.get_session()
     assert isinstance(session, AsyncSession)
