@@ -33,8 +33,9 @@ async def test_buildings_get_non_existing(session):
 @pytest.mark.asyncio
 async def test_buildings_add(session):
     building1 = BuildingFactory()
-    _id = await BuildingsRepository(session).add(building1)
+    _id = await BuildingsRepository(session).add(asdict(building1))
     buildings = await BuildingsRepository(session).list()
+    building1.id = _id
     assert _id == 1
     assert buildings == [building1]
 

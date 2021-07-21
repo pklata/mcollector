@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 from sqlalchemy import update
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -28,9 +28,11 @@ class BuildingsRepository:
             raise BuildingNotFoundError(building_id)
         return building
 
-    async def add(self, building: Building) -> Optional[int]:
+    async def add(self, building_params: Dict[str, Any]) -> int:
+        building = Building(**building_params)
         self.session.add(building)
         await self.session.flush()
+        assert building.id
         return building.id
 
     async def delete(self, building_id: int) -> None:
