@@ -8,6 +8,7 @@ from mcollector.services import buildings_service
 
 
 @pytest.mark.asyncio
+@pytest.mark.usefixtures("session")
 class TestBuildingsService:
     async def test_list(self, building):
         building1 = await building()
