@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from mcollector.locations.mappings import DBManager
+from mcollector.db import DBManager
 
 app = FastAPI()
 

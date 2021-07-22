@@ -4,7 +4,7 @@ from typing import Callable
 import pytest
 from mcollector_tests.factories import BuildingFactory, async_factory
 
-from mcollector.locations.mappings import DBManager
+from mcollector.db import DBManager
 from mcollector.locations.models import CircuitMeasurementData, Local
 
 
