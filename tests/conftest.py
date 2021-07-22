@@ -4,8 +4,8 @@ from typing import Callable
 import pytest
 from mcollector_tests.factories import BuildingFactory, async_factory
 
-from mcollector.locations.db.mappings import DBManager
-from mcollector.locations.domain.models import CircuitMeasurementData, Local
+from mcollector.locations.mappings import DBManager
+from mcollector.locations.models import CircuitMeasurementData, Local
 
 
 @pytest.fixture(scope="session")

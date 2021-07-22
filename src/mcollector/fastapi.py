@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from mcollector.locations.db.mappings import DBManager
+from mcollector.locations.mappings import DBManager
 
 app = FastAPI()
 
@@ -11,4 +11,4 @@ async def startup_event() -> None:
     await DBManager.recreate_db()
 
 
-from mcollector.locations.entrypoints.fastapi import views  # noqa
+from mcollector.locations import views  # noqa

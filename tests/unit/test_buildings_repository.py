@@ -3,10 +3,7 @@ from dataclasses import asdict
 import pytest
 from mcollector_tests.factories import BuildingFactory
 
-from mcollector.locations.repository.buildings_repository import (
-    BuildingNotFoundError,
-    BuildingsRepository,
-)
+from mcollector.locations.repository import BuildingNotFoundError, BuildingsRepository
 
 
 @pytest.mark.asyncio

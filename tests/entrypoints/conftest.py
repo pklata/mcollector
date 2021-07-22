@@ -1,7 +1,7 @@
 import pytest
 from httpx import AsyncClient
 
-from mcollector.locations.entrypoints.fastapi.app import app
+from mcollector.fastapi import app
 
 
 @pytest.fixture

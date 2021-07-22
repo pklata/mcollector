@@ -2,7 +2,7 @@ from datetime import date
 
 from mcollector_tests.factories import BuildingFactory
 
-from mcollector.locations.domain.models import (
+from mcollector.locations.models import (
     BuildingESPIR,
     Circuit,
     CircuitMeasurement,
