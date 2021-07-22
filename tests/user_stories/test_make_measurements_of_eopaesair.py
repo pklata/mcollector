@@ -14,6 +14,13 @@
 #     ResidualCurrentDeviceMeasurement,
 #     SPTechnicalConditions,
 # )
+#
+# @pytest.fixture
+# def c_meas_data():
+#     return CircuitMeasurementData(
+#         device="B-16", i_n=16.0, u_n=230.0, i_off=80.0, z_m=0.44, z_s=2.88
+#     )
+
 # @dataclass(frozen=True)
 # class SPTechnicalConditions:
 #     """Technical conditions of electric grid for electric shock protection

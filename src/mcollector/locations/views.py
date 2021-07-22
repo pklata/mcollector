@@ -4,10 +4,10 @@ from fastapi import HTTPException
 from pydantic.fields import Field
 from pydantic.main import BaseModel
 
+from mcollector.errors import NotFoundError
 from mcollector.fastapi import app
 from mcollector.locations import service
 from mcollector.locations.models import Local
-from mcollector.locations.repository import BuildingNotFoundError
 
 
 class BuildingPresentation(BaseModel):
@@ -49,7 +49,7 @@ async def list_buildings() -> List[Dict[str, Any]]:
 async def get_building(building_id: int) -> Dict[str, Any]:
     try:
         return await service.get(building_id)
-    except BuildingNotFoundError as e:
+    except NotFoundError as e:
         raise HTTPException(status_code=404, detail=e.message)
 
 
@@ -57,7 +57,7 @@ async def get_building(building_id: int) -> Dict[str, Any]:
 async def add_building(new_building: BuildingCreate) -> Dict[str, int]:
     try:
         return await service.add(new_building.dict(exclude_unset=True))
-    except BuildingNotFoundError as e:
+    except NotFoundError as e:
         raise HTTPException(status_code=404, detail=e.message)
 
 
@@ -69,7 +69,7 @@ async def update_building(
         return await service.update(
             building_id, building_update.dict(exclude_unset=True)
         )
-    except BuildingNotFoundError as e:
+    except NotFoundError as e:
         raise HTTPException(status_code=404, detail=e.message)
 
 
@@ -77,5 +77,5 @@ async def update_building(
 async def delete_building(building_id: int) -> Dict[str, int]:
     try:
         return await service.delete(building_id)
-    except BuildingNotFoundError as e:
+    except NotFoundError as e:
         raise HTTPException(status_code=404, detail=e.message)

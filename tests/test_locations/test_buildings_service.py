@@ -3,8 +3,8 @@ from dataclasses import asdict
 import pytest
 from mcollector_tests.factories import BuildingFactory
 
+from mcollector.errors import NotFoundError
 from mcollector.locations import service
-from mcollector.locations.repository import BuildingNotFoundError
 
 
 @pytest.mark.asyncio
@@ -22,7 +22,7 @@ class TestBuildingsService:
         assert building_ == asdict(building1)
 
     async def test_get_non_existing(self):
-        with pytest.raises(BuildingNotFoundError):
+        with pytest.raises(NotFoundError):
             await service.get(1)
 
     async def test_add(self):
@@ -40,7 +40,7 @@ class TestBuildingsService:
         assert buildings == []
 
     async def test_delete_non_existing(self, building):
-        with pytest.raises(BuildingNotFoundError):
+        with pytest.raises(NotFoundError):
             await service.delete(1)
 
     async def test_update(self, building):
@@ -60,5 +60,5 @@ class TestBuildingsService:
         }
 
     async def test_buildings_update_non_existing(self):
-        with pytest.raises(BuildingNotFoundError):
+        with pytest.raises(NotFoundError):
             await service.update(1, {"country": "Anglia", "address": "Graniczna 11"})

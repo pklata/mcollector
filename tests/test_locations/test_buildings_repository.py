@@ -3,7 +3,8 @@ from dataclasses import asdict
 import pytest
 from mcollector_tests.factories import BuildingFactory
 
-from mcollector.locations.repository import BuildingNotFoundError, BuildingsRepository
+from mcollector.errors import NotFoundError
+from mcollector.locations.repository import BuildingsRepository
 
 
 @pytest.mark.asyncio
@@ -23,7 +24,7 @@ async def test_buildings_get(session, building):
 
 @pytest.mark.asyncio
 async def test_buildings_get_non_existing(session):
-    with pytest.raises(BuildingNotFoundError):
+    with pytest.raises(NotFoundError):
         await BuildingsRepository(session).get(1)
 
 
@@ -47,7 +48,7 @@ async def test_building_delete(session, building):
 
 @pytest.mark.asyncio
 async def test_building_delete_non_existing(session, building):
-    with pytest.raises(BuildingNotFoundError):
+    with pytest.raises(NotFoundError):
         await BuildingsRepository(session).delete(1)
 
 
@@ -71,7 +72,7 @@ async def test_buildings_update(session, building):
 
 @pytest.mark.asyncio
 async def test_buildings_update_non_existing(session):
-    with pytest.raises(BuildingNotFoundError):
+    with pytest.raises(NotFoundError):
         await BuildingsRepository(session).update(
             1, country="Anglia", address="Graniczna 11"
         )

@@ -2,10 +2,12 @@ import asyncio
 from typing import Callable
 
 import pytest
+from httpx import AsyncClient
 from mcollector_tests.factories import BuildingFactory, async_factory
 
 from mcollector.db import DBManager
-from mcollector.locations.models import CircuitMeasurementData, Local
+from mcollector.fastapi import app
+from mcollector.locations.models import Local
 
 
 @pytest.fixture(scope="session")
@@ -32,6 +34,11 @@ async def session(async_engine):
 
 
 @pytest.fixture
+def async_app(session):
+    return AsyncClient(app=app, base_url="https://test")
+
+
+@pytest.fixture
 async def building(session) -> Callable:
     return await async_factory(BuildingFactory, session)
 
@@ -39,10 +46,3 @@ async def building(session) -> Callable:
 @pytest.fixture
 def local():
     return Local(7)
-
-
-@pytest.fixture
-def c_meas_data():
-    return CircuitMeasurementData(
-        device="B-16", i_n=16.0, u_n=230.0, i_off=80.0, z_m=0.44, z_s=2.88
-    )

@@ -1,16 +1,18 @@
 from dataclasses import dataclass, field
 from typing import List, Optional
 
+from mcollector.base_model import BaseModel
+
 
 @dataclass
-class Local:
+class Local(BaseModel):
     """Local where the part of inspection is taking place. Part of the building"""
 
-    number: int
+    number: Optional[int] = None
 
 
 @dataclass
-class Building:
+class Building(BaseModel):
     """Building where inspection is taking place"""
 
     id: Optional[int] = None
