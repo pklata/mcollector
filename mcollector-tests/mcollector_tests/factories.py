@@ -2,7 +2,7 @@ from typing import Callable, Type
 
 import factory
 
-from mcollector.domain.models import Building
+from mcollector.locations.domain.models import Building
 
 
 async def async_factory(factory_: Type[factory.Factory], session) -> Callable:

@@ -2,7 +2,7 @@ from sqlalchemy import JSON, Column, Integer, String, Table
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
 from sqlalchemy.orm import registry
 
-from mcollector.domain.models import Building
+from mcollector.locations.domain.models import Building
 
 mapper_registry = registry()
 

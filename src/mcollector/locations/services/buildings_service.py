@@ -1,8 +1,8 @@
 from dataclasses import asdict
 from typing import Any, Dict, List
 
-from mcollector.db.mappings import DBManager
-from mcollector.repository.buildings_repository import BuildingsRepository
+from mcollector.locations.db.mappings import DBManager
+from mcollector.locations.repository.buildings_repository import BuildingsRepository
 
 
 async def list() -> List[Dict[str, Any]]:

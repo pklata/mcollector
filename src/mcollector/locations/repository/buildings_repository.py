@@ -5,8 +5,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm.exc import UnmappedInstanceError
 
-from mcollector.domain.models import Building
 from mcollector.errors import NotFoundError
+from mcollector.locations.domain.models import Building
 
 
 class BuildingNotFoundError(NotFoundError):

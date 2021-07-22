@@ -4,10 +4,10 @@ from fastapi import HTTPException
 from pydantic.fields import Field
 from pydantic.main import BaseModel
 
-from mcollector.domain.models import Local
-from mcollector.entrypoints.fastapi.app import app
-from mcollector.repository.buildings_repository import BuildingNotFoundError
-from mcollector.services import buildings_service
+from mcollector.locations.domain.models import Local
+from mcollector.locations.entrypoints.fastapi.app import app
+from mcollector.locations.repository.buildings_repository import BuildingNotFoundError
+from mcollector.locations.services import buildings_service
 
 
 class BuildingPresentation(BaseModel):

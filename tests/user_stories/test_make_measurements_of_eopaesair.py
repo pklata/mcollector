@@ -1,6 +1,6 @@
 from datetime import date
 
-from mcollector.domain.models import (
+from mcollector.locations.domain.models import (
     Building,
     BuildingESPIR,
     Circuit,

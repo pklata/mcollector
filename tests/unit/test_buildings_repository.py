@@ -3,7 +3,7 @@ from dataclasses import asdict
 import pytest
 from mcollector_tests.factories import BuildingFactory
 
-from mcollector.repository.buildings_repository import (
+from mcollector.locations.repository.buildings_repository import (
     BuildingNotFoundError,
     BuildingsRepository,
 )

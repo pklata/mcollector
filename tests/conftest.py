@@ -2,10 +2,10 @@ import asyncio
 from typing import Callable
 
 import pytest
-from mcollector_tests.factories import BuildingFactory, async_factory  # noqa
+from mcollector_tests.factories import BuildingFactory, async_factory
 
-from mcollector.db.mappings import DBManager
-from mcollector.domain.models import CircuitMeasurementData, Local
+from mcollector.locations.db.mappings import DBManager
+from mcollector.locations.domain.models import CircuitMeasurementData, Local
 
 
 @pytest.fixture(scope="session")

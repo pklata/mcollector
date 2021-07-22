@@ -2,7 +2,7 @@ from dataclasses import asdict
 
 import pytest
 
-from mcollector.repository.buildings_repository import BuildingsRepository
+from mcollector.locations.repository.buildings_repository import BuildingsRepository
 
 
 @pytest.mark.asyncio
