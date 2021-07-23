@@ -37,7 +37,5 @@ class DBManager:
         return cls.engine
 
     @classmethod
-    def get_session(cls) -> AsyncSession:
-        if not cls.session:
-            cls.session = AsyncSession(cls.engine, future=True, expire_on_commit=False)
-        return cls.session
+    def session_factory(cls) -> AsyncSession:
+        return AsyncSession(cls.engine, future=True, expire_on_commit=False)

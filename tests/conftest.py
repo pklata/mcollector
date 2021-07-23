@@ -3,7 +3,7 @@ from typing import Callable
 
 import pytest
 from httpx import AsyncClient
-from mcollector_tests.factories import BuildingFactory, async_factory
+from mcollector_tests.factories import BuildingFactory
 
 from mcollector.db import DBManager
 from mcollector.fastapi import app
@@ -26,21 +26,33 @@ async def async_engine():
 
 
 @pytest.fixture
-async def session(async_engine):
-    async with DBManager.get_session() as session:
+async def recreate_db(async_engine):
+    yield
+    await DBManager.recreate_db()
+
+
+@pytest.fixture
+async def nested_session(async_engine, monkeypatch):
+    """Nested session"""
+    async with DBManager.session_factory() as session:
+
+        def mock_session_factory():
+            return session
+
         nested = await session.begin_nested()
+        monkeypatch.setattr(DBManager, "session_factory", mock_session_factory)
         yield session
         await nested.rollback()
 
 
 @pytest.fixture
-def async_app(session):
+def async_app():
     return AsyncClient(app=app, base_url="https://test")
 
 
 @pytest.fixture
-async def building(session) -> Callable:
-    return await async_factory(BuildingFactory, session)
+def building() -> Callable:
+    return BuildingFactory
 
 
 @pytest.fixture
