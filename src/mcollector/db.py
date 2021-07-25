@@ -31,6 +31,11 @@ class DBManager:
             await conn.run_sync(cls.mapper_registry.metadata.create_all)
 
     @classmethod
+    async def create_db(cls) -> None:
+        async with cls.get_engine().begin() as conn:
+            await conn.run_sync(cls.mapper_registry.metadata.create_all)
+
+    @classmethod
     def get_engine(cls) -> AsyncEngine:
         if not cls.engine:
             cls.engine = create_async_engine("sqlite+aiosqlite://", future=True)

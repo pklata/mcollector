@@ -6,6 +6,7 @@ from mcollector.locations.repository import BuildingsRepository
 
 
 @pytest.mark.asyncio
+@pytest.mark.usefixtures("nested_session")
 class TestBuildingViews:
     async def test_get_buildings(self, async_app, building, nested_session):
         nested_session.add(building(id=1))
@@ -45,7 +46,6 @@ class TestBuildingViews:
         assert response.status_code == 404
         assert response.json() == {"detail": "Building with id: 1 not found."}
 
-    @pytest.mark.usefixtures("nested_session")
     async def test_create_building(self, async_app):
         payload = {
             "country": "Polska",
