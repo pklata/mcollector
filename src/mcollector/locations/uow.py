@@ -16,6 +16,7 @@ class LocationsUnitOfWork:
 
     async def __aexit__(self, exn_type: Any, exn_value: Any, traceback: Any) -> None:
         if exn_type is not None:
+            print(f"Exception: {exn_type}, {exn_value}, {traceback}")
             await self.rollback()
         await self.session.close()
 

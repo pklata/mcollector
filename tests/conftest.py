@@ -46,6 +46,11 @@ async def nested_session(async_engine, monkeypatch):
 
 
 @pytest.fixture
+def session(async_engine):
+    return DBManager.session_factory()
+
+
+@pytest.fixture
 def async_app():
     return AsyncClient(app=app, base_url="https://test")
 
