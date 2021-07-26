@@ -1,5 +1,5 @@
-from dataclasses import dataclass, field
-from typing import List, Optional
+from dataclasses import dataclass
+from typing import Optional
 
 from mcollector.base_model import BaseModel
 
@@ -8,7 +8,10 @@ from mcollector.base_model import BaseModel
 class Local(BaseModel):
     """Local where the part of inspection is taking place. Part of the building"""
 
+    id: Optional[int] = None
     number: Optional[int] = None
+    description: Optional[str] = None
+    building_id: Optional[int] = None
 
 
 @dataclass
@@ -21,14 +24,3 @@ class Building(BaseModel):
     zip_code: Optional[str] = None
     city: Optional[str] = None
     county: Optional[str] = None
-    locals: List[Local] = field(default_factory=list)
-
-    def get_locals(self) -> List[Local]:
-        return sorted(self.locals, key=lambda l: l.number)
-
-    def add(self, local: Local) -> None:
-        self.locals.append(local)
-
-    def filter_locals(self, match: str) -> List[Local]:
-        _locals = [local for local in self.locals if match in str(local.number)]
-        return sorted(_locals, key=lambda l: l.number)

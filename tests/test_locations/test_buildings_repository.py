@@ -1,7 +1,7 @@
 from dataclasses import asdict
 
 import pytest
-from mcollector_tests.factories import BuildingFactory
+from mcollector_tests.factories import BuildingFactory, LocalFactory
 
 from mcollector.errors import NotFoundError
 from mcollector.locations.repository import BuildingsRepository
@@ -53,8 +53,9 @@ async def test_building_delete(session, building):
 
 @pytest.mark.asyncio
 async def test_building_delete_non_existing(session, building):
-    with pytest.raises(NotFoundError):
+    with pytest.raises(NotFoundError) as e:
         await BuildingsRepository(session).delete(1)
+    assert e.value.message == "Building with id: 1 not found."
 
 
 @pytest.mark.asyncio
@@ -72,14 +73,93 @@ async def test_buildings_update(session, building):
         "country": "Anglia",
         "county": "mazowieckie",
         "id": 1,
-        "locals": [],
         "zip_code": "02-200",
     }
 
 
 @pytest.mark.asyncio
 async def test_buildings_update_non_existing(session):
-    with pytest.raises(NotFoundError):
+    with pytest.raises(NotFoundError) as e:
         await BuildingsRepository(session).update(
             1, country="Anglia", address="Graniczna 11"
         )
+    assert e.value.message == "Building with id: 1 not found."
+
+
+@pytest.fixture
+async def locals_setup(session, building, local):
+    building_ = building(id=1)
+    session.add(building_)
+    local1 = local(number=7, building_id=building_.id)
+    local2 = local(number=2, building_id=building_.id)
+    session.add(local1)
+    session.add(local2)
+    await session.commit()
+    return [local2, local1]
+
+
+@pytest.mark.asyncio
+async def test_locals_list(session, locals_setup):
+    locals_ = await BuildingsRepository(session).list_locals(1)
+    assert locals_ == locals_setup
+
+
+@pytest.mark.asyncio
+async def test_locals_get(session, building, local, locals_setup):
+    local = await BuildingsRepository(session).get_local(1)
+    assert local == locals_setup[1]
+
+
+@pytest.mark.asyncio
+async def test_locals_get_non_existing(session):
+    with pytest.raises(NotFoundError) as e:
+        await BuildingsRepository(session).get_local(1)
+    assert e.value.message == "Local with id: 1 not found."
+
+
+@pytest.mark.asyncio
+async def test_locals_add(session):
+    local = LocalFactory()
+    _id = await BuildingsRepository(session).add_local(1, asdict(local))
+    local_ = await BuildingsRepository(session).get_local(1)
+    local.id = _id
+    assert local_.building_id == 1
+    assert local_.number == local.number
+    assert local_.description == local.description
+
+
+@pytest.mark.asyncio
+async def test_local_delete(session, building, locals_setup):
+    await BuildingsRepository(session).delete_local(1)
+    buildings = await BuildingsRepository(session).list_locals(1)
+    assert buildings == [locals_setup[0]]
+
+
+@pytest.mark.asyncio
+async def test_local_delete_non_existing(session, building):
+    with pytest.raises(NotFoundError) as e:
+        await BuildingsRepository(session).delete_local(1)
+    assert e.value.message == "Local with id: 1 not found."
+
+
+@pytest.mark.asyncio
+async def test_local_update(session, building, locals_setup):
+    _id = await BuildingsRepository(session).update_local(
+        1, number=17, description="Lokal Usługowy"
+    )
+    assert _id == 1
+    assert asdict(locals_setup[1]) == {
+        "building_id": 1,
+        "description": "Lokal Usługowy",
+        "id": 1,
+        "number": 17,
+    }
+
+
+@pytest.mark.asyncio
+async def test_local_update_non_existing(session):
+    with pytest.raises(NotFoundError) as e:
+        await BuildingsRepository(session).update_local(
+            1, number=17, description="Lokal Usługowy"
+        )
+    assert e.value.message == "Local with id: 1 not found."

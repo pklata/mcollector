@@ -20,7 +20,6 @@ class TestBuildingViews:
                 "zip_code": "02-200",
                 "city": "Warszawa",
                 "county": "mazowieckie",
-                "locals": [],
             }
         ]
 
@@ -37,7 +36,6 @@ class TestBuildingViews:
             "zip_code": "02-200",
             "city": "Warszawa",
             "county": "mazowieckie",
-            "locals": [],
         }
 
     async def test_get_not_existing_building(self, async_app):
@@ -53,7 +51,6 @@ class TestBuildingViews:
             "zip_code": "02-200",
             "city": "Warszawa",
             "county": "mazowieckie",
-            "locals": [],
         }
         async with async_app as app:
             response = await app.post("/building", json=payload)
@@ -77,7 +74,6 @@ class TestBuildingViews:
             country="Anglia",
             county="mazowieckie",
             id=1,
-            locals=[],
             zip_code="02-200",
         )
 

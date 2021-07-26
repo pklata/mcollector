@@ -1,7 +1,16 @@
-from typing import Any, Set, Tuple
+from dataclasses import dataclass
+from typing import Any, Dict, List, Tuple
 
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
 from sqlalchemy.orm import registry
+
+
+@dataclass
+class Mapping:
+    model: Any
+    mapping: Any
+    args: Tuple[Any, ...]
+    kwargs: Dict[str, Any]
 
 
 class DBManager:
@@ -9,18 +18,24 @@ class DBManager:
     mapping_started = False
     engine = None
     session = None
-    mappings: Set[Tuple[Any, Any]] = set()
+    mappings: List[Mapping] = []
 
     @classmethod
-    def add_mapping(cls, model: Any, mapping: Any) -> None:
-        cls.mappings.add((model, mapping))
+    def add_mapping(
+        cls, model: Any, mapping: Any, *args: Any, **kwargs: Dict[str, Any]
+    ) -> None:
+        cls.mappings.append(
+            Mapping(model=model, mapping=mapping, args=args, kwargs=kwargs)
+        )
 
     @classmethod
     def start_mappers(cls) -> None:
         if cls.mapping_started:
             return
         for mapping in cls.mappings:
-            cls.mapper_registry.map_imperatively(*mapping)
+            cls.mapper_registry.map_imperatively(
+                mapping.model, mapping.mapping, *mapping.args, **mapping.kwargs
+            )
 
         cls.mapping_started = True
 

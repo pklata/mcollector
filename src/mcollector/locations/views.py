@@ -1,13 +1,11 @@
 from typing import Any, Dict, List, Optional
 
 from fastapi import HTTPException
-from pydantic.fields import Field
 from pydantic.main import BaseModel
 
 from mcollector.errors import NotFoundError
 from mcollector.fastapi import app
 from mcollector.locations import service
-from mcollector.locations.models import Local
 from mcollector.locations.uow import uow_factory
 
 
@@ -18,7 +16,6 @@ class BuildingPresentation(BaseModel):
     zip_code: Optional[str] = None
     city: Optional[str] = None
     county: Optional[str] = None
-    locals: List[Local] = Field(default_factory=list)
 
 
 class BuildingUpdate(BaseModel):

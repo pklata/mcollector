@@ -3,11 +3,10 @@ from typing import Callable
 
 import pytest
 from httpx import AsyncClient
-from mcollector_tests.factories import BuildingFactory
+from mcollector_tests.factories import BuildingFactory, LocalFactory
 
 from mcollector.db import DBManager
 from mcollector.fastapi import app
-from mcollector.locations.models import Local
 
 
 @pytest.fixture(scope="session")
@@ -47,5 +46,5 @@ def building() -> Callable:
 
 
 @pytest.fixture
-def local():
-    return Local(7)
+def local() -> Callable:
+    return LocalFactory

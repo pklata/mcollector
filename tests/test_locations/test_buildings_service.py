@@ -70,7 +70,6 @@ class TestBuildingsService:
             country="Anglia",
             county="mazowieckie",
             id=1,
-            locals=[],
             zip_code="02-200",
         )
 
