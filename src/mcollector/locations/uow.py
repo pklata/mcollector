@@ -2,6 +2,7 @@ from typing import Any, Callable
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from mcollector.db import DBManager
 from mcollector.locations.repository import BuildingsRepository
 
 
@@ -25,3 +26,7 @@ class LocationsUnitOfWork:
 
     async def rollback(self) -> None:
         await self.session.rollback()
+
+
+def uow_factory() -> LocationsUnitOfWork:
+    return LocationsUnitOfWork(DBManager.session_factory)

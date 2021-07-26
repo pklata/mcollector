@@ -21,7 +21,7 @@ async def test_buildings_list(session, building):
 async def test_buildings_get(session, building):
     building1 = building(id=1)
     session.add(building1)
-    session.commit()
+    await session.commit()
     building_ = await BuildingsRepository(session).get(1)
     assert building_ == building1
 
@@ -45,7 +45,7 @@ async def test_buildings_add(session):
 @pytest.mark.asyncio
 async def test_building_delete(session, building):
     session.add(building(id=1))
-    session.commit()
+    await session.commit()
     await BuildingsRepository(session).delete(1)
     buildings = await BuildingsRepository(session).list()
     assert buildings == []
@@ -61,7 +61,7 @@ async def test_building_delete_non_existing(session, building):
 async def test_buildings_update(session, building):
     _building = building(id=1)
     session.add(_building)
-    session.commit()
+    await session.commit()
     _id = await BuildingsRepository(session).update(
         1, country="Anglia", address="Graniczna 11"
     )
