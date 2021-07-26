@@ -12,7 +12,7 @@ class LocationsUnitOfWork:
 
     async def __aenter__(self) -> "LocationsUnitOfWork":
         self.session: AsyncSession = self.session_factory()
-        self.buildings = LocationsRepository(self.session)
+        self.locations = LocationsRepository(self.session)
         return self
 
     async def __aexit__(self, exn_type: Any, exn_value: Any, traceback: Any) -> None:

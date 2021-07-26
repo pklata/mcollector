@@ -1,6 +1,5 @@
 from typing import Any, Dict, List
 
-from sqlalchemy import update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm.exc import UnmappedInstanceError
@@ -38,13 +37,14 @@ class LocationsRepository:
             raise NotFoundError(Building.__name__, _id)
 
     async def update_building(self, _id: int, **kwargs: Dict[str, Any]) -> int:
-        result = await self.session.execute(
-            update(Building).where(Building.id == _id).values(**kwargs)
-        )
-        if not result.rowcount:
-            raise NotFoundError(Building.__name__, _id)
+        building = await self.get_building(_id)
+        for key, value in kwargs.items():
+            if not hasattr(building, key):
+                raise AttributeError(f"{Building.__name__} don't have attribute: {key}")
+            setattr(building, key, value)
         await self.session.flush()
-        return _id
+        assert building.id
+        return building.id
 
     async def list_locals(self, building_id: int) -> List[Local]:
         results = await self.session.execute(
@@ -74,10 +74,11 @@ class LocationsRepository:
             raise NotFoundError(Local.__name__, _id)
 
     async def update_local(self, _id: int, **kwargs: Dict[str, Any]) -> int:
-        result = await self.session.execute(
-            update(Local).where(Local.id == _id).values(**kwargs)
-        )
-        if not result.rowcount:
-            raise NotFoundError(Local.__name__, _id)
+        local = await self.get_local(_id)
+        for key, value in kwargs.items():
+            if not hasattr(local, key):
+                raise AttributeError(f"{Local.__name__} don't have attribute: {key}")
+            setattr(local, key, value)
         await self.session.flush()
-        return _id
+        assert local.id
+        return local.id

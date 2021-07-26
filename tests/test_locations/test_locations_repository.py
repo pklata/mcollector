@@ -86,18 +86,6 @@ async def test_buildings_update_non_existing(session):
     assert e.value.message == "Building with id: 1 not found."
 
 
-@pytest.fixture
-async def locals_setup(session, building, local):
-    building_ = building(id=1)
-    session.add(building_)
-    local1 = local(number=7, building_id=building_.id)
-    local2 = local(number=2, building_id=building_.id)
-    session.add(local1)
-    session.add(local2)
-    await session.commit()
-    return [local2, local1]
-
-
 @pytest.mark.asyncio
 async def test_locals_list(session, locals_setup):
     locals_ = await LocationsRepository(session).list_locals(1)

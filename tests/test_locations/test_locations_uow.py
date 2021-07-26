@@ -17,13 +17,13 @@ class TestUnitOfWork:
             DBManager.session_factory()
         ).add_building(asdict(building1))
         async with LocationsUnitOfWork(DBManager.session_factory) as uow:
-            buildings = await uow.buildings.list_buildings()
+            buildings = await uow.locations.list_buildings()
             assert buildings == [building1]
 
     async def test_explicit_commit_works(self):
         async with LocationsUnitOfWork(DBManager.session_factory) as uow:
             building1 = BuildingFactory()
-            building1.id = await uow.buildings.add_building(asdict(building1))
+            building1.id = await uow.locations.add_building(asdict(building1))
             await uow.commit()
 
         buildings = await LocationsRepository(
@@ -38,7 +38,7 @@ class TestUnitOfWork:
         with pytest.raises(TestException):
             async with LocationsUnitOfWork(DBManager.session_factory) as uow:
                 building1 = BuildingFactory()
-                building1.id = await uow.buildings.add_building(asdict(building1))
+                building1.id = await uow.locations.add_building(asdict(building1))
                 raise TestException()
 
         buildings = await LocationsRepository(
