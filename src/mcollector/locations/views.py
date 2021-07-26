@@ -40,13 +40,13 @@ class BuildingIdResponse(BaseModel):
 
 @app.get("/building", response_model=List[BuildingPresentation])
 async def list_buildings() -> List[Dict[str, Any]]:
-    return await service.list(uow_factory())
+    return await service.list_buildings(uow_factory())
 
 
 @app.get("/building/{building_id}", response_model=BuildingPresentation)
 async def get_building(building_id: int) -> Dict[str, Any]:
     try:
-        return await service.get(building_id, uow_factory())
+        return await service.get_building(building_id, uow_factory())
     except NotFoundError as e:
         raise HTTPException(status_code=404, detail=e.message)
 
@@ -54,7 +54,9 @@ async def get_building(building_id: int) -> Dict[str, Any]:
 @app.post("/building", response_model=BuildingIdResponse)
 async def add_building(new_building: BuildingCreate) -> Dict[str, int]:
     try:
-        return await service.add(new_building.dict(exclude_unset=True), uow_factory())
+        return await service.add_building(
+            new_building.dict(exclude_unset=True), uow_factory()
+        )
     except NotFoundError as e:
         raise HTTPException(status_code=404, detail=e.message)
 
@@ -64,7 +66,7 @@ async def update_building(
     building_update: BuildingUpdate, building_id: int
 ) -> Dict[str, int]:
     try:
-        return await service.update(
+        return await service.update_building(
             building_id, building_update.dict(exclude_unset=True), uow_factory()
         )
     except NotFoundError as e:
@@ -74,6 +76,6 @@ async def update_building(
 @app.delete("/building/{building_id}")
 async def delete_building(building_id: int) -> Dict[str, int]:
     try:
-        return await service.delete(building_id, uow_factory())
+        return await service.delete_building(building_id, uow_factory())
     except NotFoundError as e:
         raise HTTPException(status_code=404, detail=e.message)

@@ -3,7 +3,7 @@ from typing import Any, Callable
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from mcollector.db import DBManager
-from mcollector.locations.repository import BuildingsRepository
+from mcollector.locations.repository import LocationsRepository
 
 
 class LocationsUnitOfWork:
@@ -12,7 +12,7 @@ class LocationsUnitOfWork:
 
     async def __aenter__(self) -> "LocationsUnitOfWork":
         self.session: AsyncSession = self.session_factory()
-        self.buildings = BuildingsRepository(self.session)
+        self.buildings = LocationsRepository(self.session)
         return self
 
     async def __aexit__(self, exn_type: Any, exn_value: Any, traceback: Any) -> None:
