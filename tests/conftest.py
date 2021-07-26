@@ -32,21 +32,7 @@ async def recreate_db(async_engine):
 
 
 @pytest.fixture
-async def nested_session(async_engine, monkeypatch):
-    """Nested session"""
-    async with DBManager.session_factory() as session:
-
-        def mock_session_factory():
-            return session
-
-        nested = await session.begin_nested()
-        monkeypatch.setattr(DBManager, "session_factory", mock_session_factory)
-        yield session
-        await nested.rollback()
-
-
-@pytest.fixture
-def session(async_engine):
+def session(async_engine, recreate_db):
     return DBManager.session_factory()
 
 

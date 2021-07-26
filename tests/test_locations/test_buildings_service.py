@@ -58,7 +58,7 @@ class TestBuildingsService:
             await service.delete(1, uow)
 
     async def test_update(self, session, building, uow):
-        session.add(building(id=1))
+        session.add(building())
         await session.commit()
         result = await service.update(
             1, {"country": "Anglia", "address": "Graniczna 11"}, uow
