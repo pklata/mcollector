@@ -73,11 +73,11 @@ class TestLocationsService:
                 1, {"country": "Anglia", "address": "Graniczna 11"}, uow
             )
 
-    async def test_locals_list(self, building, session, uow, locals_setup):
+    async def test_locals_list(self, uow, locals_setup):
         locals_ = await service.list_locals(1, uow)
         assert locals_ == [asdict(locals_setup[0]), asdict(locals_setup[1])]
 
-    async def test_locals_get(self, building, session, uow, locals_setup):
+    async def test_locals_get(self, uow, locals_setup):
         building_ = await service.get_local(1, uow)
         assert building_ == asdict(locals_setup[1])
 
@@ -86,16 +86,19 @@ class TestLocationsService:
             await service.get_local(1, uow)
         assert e.value.message == "Local with id: 1 not found."
 
+    @pytest.mark.usefixtures("locals_setup")
     async def test_locals_add(self, uow):
         local = LocalFactory()
-        result = await service.add_local(2, asdict(local), uow)
-        assert result == {"id": 1}
-        locals_ = await service.list_locals(2, uow)
+        result = await service.add_local(1, asdict(local), uow)
+        assert result == {"id": 3}
+        locals_ = await service.list_locals(1, uow)
         assert locals_ == [
-            {"building_id": 2, "description": None, "id": 1, "number": 7}
+            {"building_id": 1, "description": None, "id": 2, "number": 2},
+            {"building_id": 1, "description": None, "id": 1, "number": 7},
+            {"building_id": 1, "description": None, "id": 3, "number": 7},
         ]
 
-    async def test_locals_delete(self, building, session, uow, locals_setup):
+    async def test_locals_delete(self, uow, locals_setup):
         await service.delete_local(1, uow)
         locals_ = await service.list_locals(1, uow)
         assert locals_ == [asdict(locals_setup[0])]
@@ -105,7 +108,8 @@ class TestLocationsService:
             await service.delete_local(1, uow)
         assert e.value.message == "Local with id: 1 not found."
 
-    async def test_locals_update(self, session, uow, locals_setup):
+    @pytest.mark.usefixtures("locals_setup")
+    async def test_locals_update(self, uow):
         result = await service.update_local(
             1, {"number": 17, "description": "Lokal Usługowy"}, uow
         )
@@ -118,7 +122,15 @@ class TestLocationsService:
         }
 
     async def test_locals_update_non_existing(self, uow):
-        with pytest.raises(NotFoundError):
-            await service.update_building(
-                1, {"country": "Anglia", "address": "Graniczna 11"}, uow
+        with pytest.raises(NotFoundError) as e:
+            await service.update_local(
+                1, {"number": 17, "description": "Lokal Usługowy"}, uow
             )
+        assert e.value.message == "Local with id: 1 not found."
+
+    async def test_locals_create_building_not_exists(self, uow):
+        with pytest.raises(NotFoundError) as e:
+            await service.add_local(
+                1, {"number": 17, "description": "Lokal Usługowy"}, uow
+            )
+        assert e.value.message == "Building with id: 1 not found."

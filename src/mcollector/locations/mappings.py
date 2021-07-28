@@ -1,4 +1,5 @@
 from sqlalchemy import Column, ForeignKey, Integer, String, Table
+from sqlalchemy.orm import relationship
 
 from mcollector.db import DBManager
 from mcollector.locations.models import Building, Local
@@ -20,8 +21,12 @@ locals = Table(
     Column("id", Integer, primary_key=True, autoincrement=True),
     Column("number", Integer),
     Column("description", String),
-    Column("building_id", Integer, ForeignKey("buildings.id")),
+    Column("building_id", Integer, ForeignKey("buildings.id"), nullable=False),
 )
 
-DBManager.add_mapping(Building, buildings)
-DBManager.add_mapping(Local, locals)
+DBManager.add_mapping(
+    Building, buildings, properties={"locals": relationship(Local, lazy="noload")}
+)
+DBManager.add_mapping(
+    Local, locals, properties={"building": relationship(Building, lazy="noload")}
+)

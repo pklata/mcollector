@@ -1,5 +1,6 @@
 from typing import Any, Dict, List
 
+from sqlalchemy import update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm.exc import UnmappedInstanceError
@@ -37,14 +38,13 @@ class LocationsRepository:
             raise NotFoundError(Building.__name__, _id)
 
     async def update_building(self, _id: int, **kwargs: Dict[str, Any]) -> int:
-        building = await self.get_building(_id)
-        for key, value in kwargs.items():
-            if not hasattr(building, key):
-                raise AttributeError(f"{Building.__name__} don't have attribute: {key}")
-            setattr(building, key, value)
+        result = await self.session.execute(
+            update(Building).where(Building.id == _id).values(**kwargs)
+        )
+        if not result.rowcount:
+            raise NotFoundError(Building.__name__, _id)
         await self.session.flush()
-        assert building.id
-        return building.id
+        return _id
 
     async def list_locals(self, building_id: int) -> List[Local]:
         results = await self.session.execute(
@@ -59,6 +59,7 @@ class LocationsRepository:
         return local
 
     async def add_local(self, building_id: int, params: Dict[str, Any]) -> int:
+        await self.get_building(building_id)
         local = Local(**params)
         local.building_id = building_id
         self.session.add(local)
@@ -74,11 +75,10 @@ class LocationsRepository:
             raise NotFoundError(Local.__name__, _id)
 
     async def update_local(self, _id: int, **kwargs: Dict[str, Any]) -> int:
-        local = await self.get_local(_id)
-        for key, value in kwargs.items():
-            if not hasattr(local, key):
-                raise AttributeError(f"{Local.__name__} don't have attribute: {key}")
-            setattr(local, key, value)
+        result = await self.session.execute(
+            update(Local).where(Local.id == _id).values(**kwargs)
+        )
+        if not result.rowcount:
+            raise NotFoundError(Local.__name__, _id)
         await self.session.flush()
-        assert local.id
-        return local.id
+        return _id
