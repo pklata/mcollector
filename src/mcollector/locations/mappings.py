@@ -25,8 +25,16 @@ locals = Table(
 )
 
 DBManager.add_mapping(
-    Building, buildings, properties={"locals": relationship(Local, lazy="noload")}
+    Building,
+    buildings,
+    properties={
+        "locals": relationship(Local, lazy="noload", back_populates="building")
+    },
 )
 DBManager.add_mapping(
-    Local, locals, properties={"building": relationship(Building, lazy="noload")}
+    Local,
+    locals,
+    properties={
+        "building": relationship(Building, lazy="noload", back_populates="locals")
+    },
 )
